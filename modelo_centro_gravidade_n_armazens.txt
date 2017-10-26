@@ -1,0 +1,37 @@
+set facilidades;
+set armazens;
+
+param cx{i in facilidades};
+param cy{i in facilidades};
+param v{i in facilidades};
+param r{i in facilidades};
+param beta;
+param cluster{i in facilidades, j in armazens};
+
+var x{armazens};
+var y{armazens};
+var d{i in facilidades, j in armazens} >= 0;
+
+minimize cost: sum{i in facilidades, j in armazens}(v[i] * r[i] * d[i, j]) ;
+
+s.t. distance{i in facilidades, j in armazens: cluster[i, j] == 1}: d[i, j] = beta * sqrt((cx[i] - x[j]) ** 2 + (cy[i] - y[j]) ** 2);
+s.t. x_position{k in armazens}: x[k] = sum{i in facilidades: cluster[i, k] == 1}(v[i] * r[i] * cx[i]) / sum{j in facilidades: cluster[j, k] == 1}(v[j] * r[j]);
+s.t. y_position{k in armazens}: y[k] = sum{i in facilidades: cluster[i, k] == 1}(v[i] * r[i] * cy[i]) / sum{j in facilidades: cluster[j, k] == 1}(v[j] * r[j]);
+
+data;
+
+set facilidades := a b c d;
+set armazens := 1 2;
+
+param cx := a 1 b 5 c 5 d 10;
+param cy := a 2 b 3 c 1 d 0;
+param v := a 5 b 10 c 12 d 8;
+param r := a 1 b 1 c 1 d 1;
+param beta := 1;
+param cluster : 1 2 :=
+                                 a 1 0
+								 b 0 1
+								 c 0 1
+								 d 1 0;
+
+end;
