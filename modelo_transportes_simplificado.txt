@@ -1,0 +1,26 @@
+set clients;
+set suppliers;
+
+param d{i in clients};
+param s{i in suppliers};
+param c{i in suppliers, j in clients};
+
+var x{i in suppliers, j in clients} >= 0, integer;
+
+minimize cost: sum{i in suppliers, j in clients} (c[i, j] * x[i, j]);
+
+s.t. offers{i in suppliers}: sum{j in clients} x[i, j] <= s[i];
+s.t. requests{j in clients}: sum{i in suppliers} x[i, j] >= d[j];
+
+data;
+
+set clients := 1 2 3 4;
+set suppliers := 1 2 3;
+param d := 1 80 2 65  3 70  4 85;
+param s := 1  75 2 125 3 100;
+param c : 1 2 3 4 :=
+				1 464 513 654 867
+				2 352 416 690 791 
+				3 995 682 388 685;
+
+end;
